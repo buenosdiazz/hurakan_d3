@@ -4,6 +4,7 @@
 <!-- Create a div where the graph will take place -->
 
 <body>
+  <h3> Place the numbered chips in the corresponding sectors </h3>
 </body>
 
 <script src="https://d3js.org/d3.v5.min.js"></script>
@@ -56,15 +57,15 @@
                circles.attr("fill","green")
                     .style("opacity", .5)
 
-    // var circlelabels = svg.selectAll("text.circ")
-    //               .data(data)
-    //               .enter()
-    //               .append("text")
-    //               .attr("class", "circ")
-    //               .text(function(d) {return d.value })
-    //               .style("font-size", "10px");
-    //               circlelabels.attr("x", function(d) {return d.cx - 5})
-    //                         .attr("y",function(d) {return d.cy+ 5});
+    var circlelabels = svg.selectAll("text.circ")
+                  .data(data)
+                  .enter()
+                  .append("text")
+                  .attr("class", "circ")
+                  .text(function(d) {return d.value })
+                  .style("font-size", "10px");
+                  circlelabels.attr("x", function(d) {return d.cx - 5})
+                            .attr("y",function(d) {return d.cy+ 5});
 
     function dragstarted(d) {
       d3.select(this).raise().classed("active", true);
