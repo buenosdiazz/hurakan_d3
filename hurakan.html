@@ -11,150 +11,146 @@
 
 <script>
   d3.csv("data/circles.csv", function(d) {
-    //convert string into #
-    return {
-      cx: +d.cx,
-      cy: +d.cy,
-      value: +d.value,
-      radius: +d.radius,
-    };
-  }).then(function(data) {
+    function(d) {
+      //convert string into #
+
+      //console.log(d);
+
+      return {
+        cx : +d.cx,
+        cy : +d.cy,
+        value : +d.value,
+        radius : +d.radius,
+      };
+    }).then(function(data) {
+      //variables for height, width, and padding
+      var w = 700;
+      var	h = 500;
+      var p = 40;
+      var counts={};
 
 
-    //variables for height, width, and padding
-    var w = 700;
-    var h = 500;
-    var p = 40;
+      //create svg
+      var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width",w + p)
+                    .attr("height",h + p);
 
-    //create svg
-    var svg = d3.select("body")
-      .append("svg")
-      .attr("width", w + p)
-      .attr("height", h + p);
+      //loop data to create group, circle and
 
+      //draw circles & bind to data
 
-    //loop data to create group, circle and
+        var circles = svg.selectAll("circle")
+                    .data(data)
+                    .enter()
+                    .append("circle");
 
-    //draw circles & bind to data
+          circles.attr("cx", function(d) {return d.cx})
+                  .attr("cy",function(d) {return d.cy})
+                  .attr("r", function(d) {return d.radius})
+                  .attr("id",function(d) {return d.circle})
+                  .attr("draggable",true)
+                  .call(d3.drag()
+                  .on("start", dragstarted)
+                  .on("drag", dragged)
+                  .on("end", dragended));
 
-    var circles = svg.selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle");
+                 circles.attr("fill","green")
+                      .style("opacity", .5)
 
+          var circlelabels = svg.selectAll("text.circ")
+                    .data(data)
+                    .enter()
+                    .append("text")
+                    .attr("class", "circ")
+                    .text(function(d) {return d.value })
+                    .style("font-size", "10px");
+                    circlelabels.attr("x", function(d) {return d.cx - 5})
+                              .attr("y",function(d) {return d.cy+ 5});
 
+      function dragstarted(e) {
+          //console.log("dragstart:",d3.event.target);
+          d3.select(this).raise().classed("active", true);
+      }
 
-    circles.attr("cx", function(d) {
-        return d.cx
-      })
-      .attr("cy", function(d) {
-        return d.cy
-      })
-      .attr("r", function(d) {
-        return d.radius
-      })
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended));
+      function dragged(d) {
+        d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y)
+      }
 
-    circles.attr("fill", "green")
-      .style("opacity", .5)
+      function dragended(d,e) {
+          console.log("dropped circle:");
+          console.log(d);
+          var total = 0;
 
-    var circlelabels = svg.selectAll("text.circ")
-      .data(data)
-      .enter()
-      .append("text")
-      .attr("class", "circ")
-      .text(function(d) {
-        return d.value
-      })
-      .style("font-size", "10px");
-    circlelabels.attr("x", function(d) {
-        return d.cx - 5
-      })
-      .attr("y", function(d) {
-        return d.cy + 5
-      });
+          //console.log(e);
+          d3.select(this).lower();
+          var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
+          d3.select(this).raise();
 
-    function dragstarted(d) {
-      d3.select(this).raise().classed("active", true);
-    }
+          if (arc_id) {
+              // increment count
+              counts[arc_id] = (counts[arc_id]||0)+d.value;
+              d.currArc = arc_id;
+          }
+          else {
+              // decrement count
+              if (d.currArc) {
+                  counts[d.currArc] = counts[d.currArc]-(d.value);
+                  delete d.currArc;
+              }
+              //counts[arc_id] = (counts[arc_id]||0)+1;
+          }
 
-    function dragged(d) {
-      d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y)
+         Object.keys(counts).forEach((arc)=>{
+              console.log(arc);
+              total = total + counts[arc];
+          })
 
+          console.log(counts);
+          console.log(total);
 
-    }
+          d3.select(this).classed("active", false);
+          var circlemoved = []
+          var x = d3.event.x;
+          var y = d3.event.y;
+          var z= d.value;
 
-    function dragended(d) {
+          circlemoved.push(x,y,z);
 
-      var id = d3.select(document.elementFromPoint(d3.event.x, d3.event.y))
-        .attr("id");
+      }
 
-      console.log(id);
-
-
-
-      d3.select(this).classed("active", false);
-
-
-      var circlemoved = []
-
-      var x = d3.event.x;
-      var y = d3.event.y;
-      var z = d.value;
-
-      circlemoved.push(x, y, z);
-
-
-
-      // set up counter
-
-
-    }
-
-
-
-    // create pie chart
-    // create slices
-    var pieslices = [20, 20, 20, 20, 20, 20, 20, 20]
-    var color = d3.scaleOrdinal()
+      var pieslices = [20,20,20,20,20,20,20,20]
+      var color = d3.scaleOrdinal()
       .domain(pieslices)
-      .range(["#FFFF", "#FFFF"])
-    var radius = 220
+      .range(["#FFFF","#FFFF"])
+      var radius = 220
 
 
-    var pie = d3.pie()
-      .value(function(d) {
-        return d.value;
-      })
+      var pie= d3.pie()
+      .value(function(d) {return d.value; })
 
 
-    var pie_ready = pie(d3.entries(pieslices))
+      var pie_ready = pie(d3.entries(pieslices))
 
-    svg.selectAll('pie')
-      .data(pie_ready)
-      .enter()
-      .append('path')
-      .attr("transform", "translate(320,320)")
-      .attr('d', d3.arc()
-        .innerRadius(0)
-        .outerRadius(radius)
-      )
-      .attr('fill', function(d) {
-        return (color(d.data.key))
-      })
-      .attr("id", function(d, i) {
-        return "arc_" + i;
-      })
-      .attr("stroke", "black")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7)
+      svg
+        .selectAll('pie')
+        .data(pie_ready)
+        .enter()
+        .append('path')
+        .attr("transform", "translate(320,320)")
+        .attr("droppable",true)
+        .attr('d', d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius)
+        )
+        .attr('fill', function(d){ return(color(d.data.key)) })
+        .attr("id",function(d,i) {
+          return "arc_"+i;
+        })
+        .attr("stroke", "black")
+        .style("stroke-width", "2px")
+            .style("opacity", 0.7)
 
+    });
 
-
-
-
-  });
-</script>
+</script> 
