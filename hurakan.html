@@ -56,33 +56,29 @@
 
         //draw circles & bind to data
 
-          var circles = svg.selectAll("circle")
-                      .data(data)
-                      .enter()
-                      .append("circle");
+        var group = svg.selectAll('g')
+                        .data(data)
+                        .enter().append("g")
+                        .attr("draggable",true)
+                        .call(d3.drag()
+                        .on("start", dragstarted)
+                        .on("drag", dragged)
+                        .on("end", dragended));
 
-            circles.attr("cx", function(d) {return d.cx})
+            group.append("circle")
+                    .attr("cx", function(d) {return d.cx})
                     .attr("cy",function(d) {return d.cy})
                     .attr("r", function(d) {return d.radius})
                     .attr("id",function(d) {return d.circle})
-                    .attr("draggable",true)
-                    .call(d3.drag()
-                    .on("start", dragstarted)
-                    .on("drag", dragged)
-                    .on("end", dragended));
+                    .attr("fill","green")
+                    .style("opacity", .5);
 
-                   circles.attr("fill","green")
-                        .style("opacity", .5)
-
-            var circlelabels = svg.selectAll("text.circ")
-                      .data(data)
-                      .enter()
-                      .append("text")
-                      .attr("class", "circ")
+                    group.append("text")
                       .text(function(d) {return d.value })
-                      .style("font-size", "10px");
-                      circlelabels.attr("x", function(d) {return d.cx - 5})
-                                .attr("y",function(d) {return d.cy+ 5});
+                      .style("font-size", "15px")
+                    .attr("x", function(d) {return d.cx - 5})
+                      .attr("y",function(d) {return d.cy+ 5});
+
 
         function dragstarted(e) {
             //console.log("dragstart:",d3.event.target);
@@ -90,7 +86,13 @@
         }
 
         function dragged(d) {
-          d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y)
+          d3.select(this).select("circle").attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+
+          d3.select(this).select("text")
+            .attr("x", d.x = d3.event.x)
+            .attr("y", d.y = d3.event.y);
+
+
         }
 
         function dragended(d,e) {
