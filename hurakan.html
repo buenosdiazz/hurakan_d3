@@ -10,9 +10,7 @@
 <script>
   d3.csv("data/circles.csv", function(d) {
     //convert string into #
-
     //console.log(d);
-
     return {
       circle: d.circle,
       cx: +d.cx,
@@ -28,9 +26,9 @@
     var counts = {};
     var img_url = "url(/images/Sandy_NHC.png)"
 
+
+
     //create svg
-
-
     var svg = d3.select("body")
       .append("svg")
       .attr("width", w + p)
@@ -94,7 +92,7 @@
 
 
 
-
+//drag functions
     function dragstarted(e) {
       //console.log("dragstart:",d3.event.target);
       d3.select(this).raise().classed("active", true);
@@ -106,8 +104,6 @@
       d3.select(this).select("text")
         .attr("x", d.x = d3.event.x - 6)
         .attr("y", d.y = d3.event.y + 5);
-
-
     }
 
     function dragended(d, e) {
@@ -133,12 +129,13 @@
       }
 
       Object.keys(counts).forEach((arc) => {
-        console.log(arc);
+      //  console.log(arc);
         total = total + counts[arc];
       })
 
-      console.log(counts);
-      console.log(total);
+  //  print for each sector
+    console.log(counts[d.currArc]);
+      //console.log(total);
 
       d3.select(this).classed("active", false);
       var circlemoved = []
@@ -154,24 +151,26 @@
       //   .attr("x", 100)
       //   .attr("dy", 200)
       //   .text("Total: " + total);
+
+  
     }
 
 
 
     var pieslices = [20, 20, 20, 20, 20, 20, 20, 20]
-    var color = d3.scaleOrdinal()
-      .domain(pieslices)
-      .range(["#ffff", "#FFFF"])
     var radius = 220
 
 
     var pie = d3.pie()
+    .startAngle(-90 * Math.PI/180)
+    .endAngle(-90 * Math.PI/180 + 2*Math.PI)
       .value(function(d) {
         return d.value;
       })
 
 
     var pie_ready = pie(d3.entries(pieslices))
+
 
     svg
       .selectAll('pie')
@@ -194,7 +193,16 @@
       .style("stroke-opacity", 1);
 
 
-
+      svg.selectAll(".sectorText")
+      			.data(pie_ready)
+      		   .enter().append("text")
+      			.attr("class", "sectorText")
+      			.attr("dy", +15)
+      		   .append("textPath")
+             .attr("startOffset","15%")
+                .style("text-anchor","middle")
+      			.attr("xlink:href",function(d,i){return "#arc_"+i;})
+      			.text("Sector Total");
 
 
   });
