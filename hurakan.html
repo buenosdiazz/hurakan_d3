@@ -47,7 +47,8 @@
               .attr("width", "100%")
               .attr("height", "100%")
               .attr("x", 0)
-              .attr("y", 0);
+              .attr("y", 0)
+              .style("opacity", .6);
 
 
 
@@ -60,6 +61,7 @@
                         .data(data)
                         .enter().append("g")
                         .attr("draggable",true)
+                        .attr("cursor", "move")
                         .call(d3.drag()
                         .on("start", dragstarted)
                         .on("drag", dragged)
@@ -70,15 +72,20 @@
                     .attr("cy",function(d) {return d.cy})
                     .attr("r", function(d) {return d.radius})
                     .attr("id",function(d) {return d.circle})
-                    .attr("fill","darkslategrey	")
-                    .style("opacity", .7);
+                    .style("stroke","darkslategrey	")
+                    .style("fill","#FFFF	")
+                    .style("opacity", .7)
+                    .style("stroke-width", "1px")
+                    .style("stroke-opacity", 0.9);
 
                     group.append("text")
                       .text(function(d) {return d.value })
                       .style("font-size", "15px")
-                      .attr("fill","white")
+                      .attr("fill","darkslategrey")
                     .attr("x", function(d) {return d.cx - 6})
                       .attr("y",function(d) {return d.cy+ 6});
+
+
 
 
         function dragstarted(e) {
@@ -175,7 +182,7 @@
             return "arc_"+i;
           })
           .attr("stroke", "#FF69B4")
-          .style("stroke-width", "1px")
+          .style("stroke-width", "2px")
           .style("stroke-opacity", 0.9);
 
 
