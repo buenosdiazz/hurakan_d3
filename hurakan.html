@@ -7,6 +7,7 @@
 </body>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 
+
 <script>
   d3.csv("data/circles.csv", function(d) {
     //convert string into #
@@ -95,6 +96,7 @@
 //drag functions
     function dragstarted(e) {
       //console.log("dragstart:",d3.event.target);
+
       d3.select(this).raise().classed("active", true);
     }
 
@@ -110,7 +112,6 @@
       //  console.log("dropped circle:");
       //    console.log(d);
       var total = 0;
-      //console.log(e);
       d3.select(this).lower();
       var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
       d3.select(this).raise();
@@ -136,6 +137,7 @@
   //  print for each sector
     console.log(counts[d.currArc]);
       //console.log(total);
+      console.log(counts);
 
       d3.select(this).classed("active", false);
       var circlemoved = []
@@ -152,7 +154,6 @@
       //   .attr("dy", 200)
       //   .text("Total: " + total);
 
-  
     }
 
 
