@@ -10,201 +10,208 @@
 
 <script>
   d3.csv("data/circles.csv", function(d) {
-    //convert string into #
-    //console.log(d);
-    return {
-      circle: d.circle,
-      cx: +d.cx,
-      cy: +d.cy,
-      value: +d.value,
-      radius: +d.radius,
-    };
-  }).then(function(data) {
-    //variables for height, width, and padding
-    var w = 800;
-    var h = 900;
-    var p = 40;
-    var counts = {};
-    var img_url = "url(/images/Sandy_NHC.png)"
+      //convert string into #
+      //console.log(d);
+      return {
+        circle: d.circle,
+        cx: +d.cx,
+        cy: +d.cy,
+        value: +d.value,
+        radius: +d.radius,
+      };
+    }).then(function(data) {
+      //variables for height, width, and padding
+      var w = 800;
+      var h = 900;
+      var p = 40;
+      var counts = {};
+      var img_url = "url(/images/Sandy_NHC.png)"
 
+      //create svg
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w + p)
+        .attr("height", h + p);
 
-
-    //create svg
-    var svg = d3.select("body")
-      .append("svg")
-      .attr("width", w + p)
-      .attr("height", h + p);
-
-    svg
-      .append('svg:image')
-      .attr("xlink:href", "images/Sandy_NHC.png")
-      .attr("width", "100%")
-      .attr("height", "100%")
-      .attr("x", 0)
-      .attr("y", 0)
-      .style("opacity", .6);
+      svg
+        .append('svg:image')
+        .attr("xlink:href", "https://buenosdiazz.github.io/hurakan_d3/images/Sandy_NHC.png")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("opacity", .6);
 
 
 
 
-    //GROUP with text and circle
-    var group = svg.selectAll('g')
-      .data(data)
-      .enter().append("g")
-      .attr("draggable", true)
-      //cursor design
-      .attr("cursor", "move")
-      .call(d3.drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended));
+      //GROUP with text and circle
+      var group = svg.selectAll('g')
+        .data(data)
+        .enter().append("g")
+        .attr("draggable", true)
+        //cursor design
+        .attr("cursor", "move")
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
 
-    group.append("circle")
-      .attr("cx", function(d) {
-        return d.cx
-      })
-      .attr("cy", function(d) {
-        return d.cy
-      })
-      .attr("r", function(d) {
-        return d.radius
-      })
-      .attr("id", function(d) {
-        return d.circle
-      })
-      .style("stroke", "darkslategrey	")
-      .style("fill", "#FFFF	")
-      .style("opacity", .7)
-      .style("stroke-width", "2px")
-      .style("stroke-opacity", 0.9);
+      group.append("circle")
+        .attr("cx", function(d) {
+          return d.cx
+        })
+        .attr("cy", function(d) {
+          return d.cy
+        })
+        .attr("r", function(d) {
+          return d.radius
+        })
+        .attr("id", function(d) {
+          return d.circle
+        })
+        .style("stroke", "darkslategrey	")
+        .style("fill", "#FFFF	")
+        .style("opacity", .7)
+        .style("stroke-width", "2px")
+        .style("stroke-opacity", 0.9);
 
-    group.append("text")
-      .text(function(d) {
-        return d.value
-      })
-      .style("font-size", "14px")
-      .attr("fill", "darkslategrey")
-      .attr("x", function(d) {
-        return d.cx - 6
-      })
-      .attr("y", function(d) {
-        return d.cy + 5
-      });
+      group.append("text")
+        .text(function(d) {
+          return d.value
+        })
+        .style("font-size", "14px")
+        .attr("fill", "darkslategrey")
+        .attr("x", function(d) {
+          return d.cx - 6
+        })
+        .attr("y", function(d) {
+          return d.cy + 5
+        });
 
 
 
-//drag functions
-    function dragstarted(e) {
-      //console.log("dragstart:",d3.event.target);
-
-      d3.select(this).raise().classed("active", true);
-    }
-
-    function dragged(d) {
-      d3.select(this).select("circle").attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
-
-      d3.select(this).select("text")
-        .attr("x", d.x = d3.event.x - 6)
-        .attr("y", d.y = d3.event.y + 5);
-    }
-
-    function dragended(d, e) {
-      //  console.log("dropped circle:");
-      //    console.log(d);
-      var total = 0;
-      d3.select(this).lower();
-      var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
-      d3.select(this).raise();
-
-      if (arc_id) {
-        // increment count
-        counts[arc_id] = (counts[arc_id] || 0) + d.value;
-        d.currArc = arc_id;
-      } else {
-        // decrement count
-        if (d.currArc) {
-          counts[d.currArc] = counts[d.currArc] - (d.value);
-          delete d.currArc;
-        }
-        //counts[arc_id] = (counts[arc_id]||0)+1;
+  //drag functions
+      function dragstarted(e) {
+        //console.log("dragstart:",d3.event.target);
+        d3.select(this).raise().classed("active", true);
       }
 
-      Object.keys(counts).forEach((arc) => {
-      //  console.log(arc);
-        total = total + counts[arc];
-      })
+      function dragged(d) {
+        d3.select(this).select("circle").attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
 
-  //  print for each sector
-    console.log(counts[d.currArc]);
-      //console.log(total);
-      console.log(counts);
+        d3.select(this).select("text")
+          .attr("x", d.x = d3.event.x - 6)
+          .attr("y", d.y = d3.event.y + 5);
+      }
 
-      d3.select(this).classed("active", false);
-      var circlemoved = []
-      var x = d3.event.x;
-      var y = d3.event.y;
-      var z = d.value;
+      function dragended(d, e) {
+        //  console.log("dropped circle:");
+        //    console.log(d);
+        var total = 0;
+        //console.log(e);
+        d3.select(this).lower();
+        var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
+        d3.select(this).raise();
 
-      circlemoved.push(x, y, z);
-      //position dropped
-      //console.log(circlemoved);
+        if (arc_id) {
+            if (d.currArc) {
+                  // circle has already been already been dragged
+                  // decrement it from the prev arc
+                  counts[d.currArc] = counts[d.currArc]-(d.value);
+            }
 
-      // svg.append("text")
-      //   .attr("x", 100)
-      //   .attr("dy", 200)
-      //   .text("Total: " + total);
+          // increment count
+          counts[arc_id] = (counts[arc_id] || 0) + d.value;
+          d.currArc = arc_id;
 
-    }
+        } else {
+          // decrement count
+          if (d.currArc) {
+            counts[d.currArc] = counts[d.currArc] - (d.value);
+            delete d.currArc;
+          }
+          //counts[arc_id] = (counts[arc_id]||0)+1;
+        }
 
+        Object.keys(counts).forEach((arc) => {
+          //console.log(document.getElementById("text_"+arc).innerHTML);
+          if (document.getElementById("text_"+arc)) {
+              document.getElementById("text_"+arc).innerHTML = counts[arc];
+          }
+          total = total + counts[arc];
+        })
 
+    //  print for each sector
+        //console.log(counts);
+        //console.log(total);
 
-    var pieslices = [20, 20, 20, 20, 20, 20, 20, 20]
-    var radius = 220
+       d3.select(this).classed("active", false);
+        var circlemoved = []
+        var x = d3.event.x;
+        var y = d3.event.y;
+        var z = d.value;
 
+        circlemoved.push(x, y, z);
+        //position dropped
+        //console.log(circlemoved);
 
-    var pie = d3.pie()
-    .startAngle(-90 * Math.PI/180)
-    .endAngle(-90 * Math.PI/180 + 2*Math.PI)
-      .value(function(d) {
-        return d.value;
-      })
+        // svg.append("text")
+        //   .attr("x", 100)
+        //   .attr("dy", 200)
+        //   .text("Total: " + total);
 
+      }
 
-    var pie_ready = pie(d3.entries(pieslices))
-
-
-    svg
-      .selectAll('pie')
-      .data(pie_ready)
-      .enter()
-      .append('path')
-      .attr("transform", "translate(379,589), rotate(-23)")
-      .attr("droppable", true)
-      .attr('d', d3.arc()
-        .innerRadius(0)
-        .outerRadius(radius)
-      )
-      .attr('fill', "#FF69B4")
-      .style("fill-opacity", 0.03)
-      .attr("id", function(d, i) {
-        return "arc_" + i;
-      })
-      .attr("stroke", "#FF69B4")
-      .style("stroke-width", "2px")
-      .style("stroke-opacity", 1);
-
-
-      svg.selectAll(".sectorText")
-      			.data(pie_ready)
-      		   .enter().append("text")
-      			.attr("class", "sectorText")
-      			.attr("dy", +15)
-      		   .append("textPath")
-             .attr("startOffset","15%")
-                .style("text-anchor","middle")
-      			.attr("xlink:href",function(d,i){return "#arc_"+i;})
-      			.text("Sector Total");
+      var pieslices = [20, 20, 20, 20, 20, 20, 20, 20]
+      var radius = 220
 
 
-  });
+      var pie = d3.pie()
+      .startAngle(-90 * Math.PI/180)
+      .endAngle(-90 * Math.PI/180 + 2*Math.PI)
+        .value(function(d) {
+          return d.value;
+        })
+
+
+      var pie_ready = pie(d3.entries(pieslices))
+
+
+      svg
+        .selectAll('pie')
+        .data(pie_ready)
+        .enter()
+        .append('path')
+        .attr("transform", "translate(379,589), rotate(-23)")
+        .attr("droppable", true)
+        .attr('d', d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius)
+        )
+        .attr('fill', "#FF69B4")
+        .style("fill-opacity", 0.03)
+        .attr("id", function(d, i) {
+          return "arc_" + i;
+        })
+        .attr("stroke", "#FF69B4")
+        .style("stroke-width", "2px")
+        .style("stroke-opacity", 1);
+
+
+        svg.selectAll(".sectorText")
+        		.data(pie_ready)
+        		.enter().append("text")
+        		.attr("class", "sectorText")
+        		.attr("dy", +15)
+        		.append("textPath")
+              .attr("startOffset","15%")
+              .style("text-anchor","middle")
+              .attr("id",function(d,i){return "text_arc_"+i;})
+        		.attr("xlink:href",function(d,i){return "#arc_"+i;})
+        		.text("Sector Total");
+
+
+    });
+
 </script>
