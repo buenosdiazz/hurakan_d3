@@ -3,7 +3,7 @@
 <style>
 button{
     position:absolute;
-    bottom: 20%;
+    bottom: -100px;
     right:3%;
     background-color: darkslategrey;
 border: none;
@@ -170,6 +170,7 @@ font-size: 16px;
               document.getElementById("text_"+arc).innerHTML = counts[arc];
           }
           total = total + counts[arc];
+
         })
 
     //  print for each sector
@@ -190,6 +191,15 @@ font-size: 16px;
         //   .attr("x", 100)
         //   .attr("dy", 200)
         //   .text("Total: " + total);
+console.log(total);
+
+// ("#nextb").click(function() {
+//     if (total = 100) {
+//       console.log("yes");
+//     }, else  {
+//         console.log("no")
+//     }
+// });
 
       }
 
@@ -239,13 +249,15 @@ font-size: 16px;
               .style("text-anchor","middle")
               .attr("id",function(d,i){return "text_arc_"+i;})
         		.attr("xlink:href",function(d,i){return "#arc_"+i;})
-        		.text("Sector Total");
+        		.text("0");
+
+
 
 
     });
 
 </script>
 <div>
-  <button type="button"> NEXT MAP >> </button>
+  <button id="nextb" type="button"> NEXT MAP >> </button>
 </div>
 </html>
