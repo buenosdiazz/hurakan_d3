@@ -35,13 +35,27 @@
 
       svg
         .append('svg:image')
-        .attr("xlink:href", "https://buenosdiazz.github.io/hurakan_d3/images/Sandy_NHC.png")
+        .attr("xlink:href", "images/Sandy_NHC.png")
         .attr("width", "100%")
         .attr("height", "100%")
         .attr("x", 0)
         .attr("y", 0)
         .style("opacity", .6);
 
+        var svg2 = d3.select("body")
+          .append("svg")
+          .attr("width", 530)
+          .attr("height", 900);
+
+
+          svg2
+            .append('svg:image')
+            .attr("xlink:href", "images/Sandy_NHC2.png")
+            .attr("width", "100%")
+            .attr("height", "55%")
+            .attr("x", 0)
+            .attr("y", 0)
+            .style("opacity", 1);
 
 
 
