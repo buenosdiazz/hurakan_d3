@@ -17,10 +17,7 @@ font-size: 16px;
 </style>
 
 <body>
-  <label for="name">Participant ID</label>
-
-<input type="text" id="p_id" name="name" required
-       minlength="4" maxlength="8" size="10">
+<h2>Image 2</h2>
 
 
   <h3> Place the numbered chips in the corresponding sectors </h3>
@@ -31,7 +28,7 @@ font-size: 16px;
 
 
 <script>
-var pID= document.getElementById("p_id").value;
+
 var site = "Site1"
 var sectors = {};
 var nhc = {};
@@ -306,9 +303,10 @@ console.log(imagename, sectors);
                 }
                }).done(function(data) {
                   console.log(data);
-               })
-window.location.href = "h2.html";
-               ;
+               });
+
+
+
 
     }
     else {
