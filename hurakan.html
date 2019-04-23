@@ -17,10 +17,6 @@ font-size: 16px;
 </style>
 
 <body>
-  <label for="name">Participant ID</label>
-
-<input type="text" id="p_id" name="name" required
-       minlength="4" maxlength="8" size="10">
 
 
   <h3> Place the numbered chips in the corresponding sectors </h3>
@@ -31,7 +27,14 @@ font-size: 16px;
 
 
 <script>
-var pID= document.getElementById("p_id").value;
+var timeSpent = 0; //seconds on page
+var timer;
+window.onload = function() {
+  timer = setInterval( function() { timeSpent++; }, 998 );
+};
+
+
+
 var site = "Site1"
 var sectors = {};
 var nhc = {};
@@ -280,9 +283,15 @@ $(function(){
   $('#nextb').on('click', function(){
 //this is what I want to save!
 console.log(imagename, sectors);
+console.log(localStorage.getItem("participant"));
 
 
     if(endtotal == 100){
+
+      window.onunload = function() {
+  timer = clearInterval( timer );
+  //.. do something with timeSpent here...
+}
       //we move on
       $.ajax({
                 url: "https://api.airtable.com/v0/appuVTqHDePN2JHNz/sheet?api_key=keyOa4X3WLWW1SzgE",
@@ -290,7 +299,7 @@ console.log(imagename, sectors);
                 dataType: "json",
                 data: {
                   "fields" : {
-                    "P#": pID,
+                    "P#": localStorage.getItem("participant"),
                     "text_arc_1": sectors.text_arc_1,
                     "text_arc_2": sectors.text_arc_2,
                     "text_arc_3": sectors.text_arc_3,
@@ -300,14 +309,14 @@ console.log(imagename, sectors);
                     "text_arc_7": sectors.text_arc_7,
                     "text_arc_8": sectors.text_arc_8,
                     "img_url": imagename,
-                    "time": '',
+                    "time": timeSpent,
                     "test": site,
                   }
                 }
                }).done(function(data) {
                   console.log(data);
                })
-window.location.href = "h2.html";
+//window.location.href = "h2.html";
                ;
 
     }
@@ -317,6 +326,8 @@ window.location.href = "h2.html";
   });
 
 });
+
+
 
 
   </script>

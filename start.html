@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<html lang = "en">
+<head>
+  <!-- basic.html -->
+  <title>Start</title>
+  <meta charset = "UTF-8" />
+  <style>
+    button {
+      position: absolute;
+      background-color: darkslategrey;
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Start Page</h1>
+  <label for="name">Participant ID</label>
+
+<input type="text" id="p_id" name="name" required
+       minlength="4" maxlength="8" size="10">
+   <br><Br>
+
+  <script src="https://code.jquery.com/jquery-3.4.0.min.js" integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+localStorage.clear()
+  $(function() {
+    $('#start').on('click', function() {
+      //this is what I want to save!
+      var pID= document.getElementById("p_id").value;
+
+
+
+      var local = localStorage.setItem("participant", pID);
+
+      window.location.href = "hurakan.html";
+    });
+
+  });
+</script>
+
+
+  <button id="start" type="button"> START </button>
+</body>
+
+
+</html>
