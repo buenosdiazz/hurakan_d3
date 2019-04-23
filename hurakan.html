@@ -25,6 +25,10 @@ font-size: 16px;
 
 
 <script>
+var sectors = {};
+var nhc = {};
+var endtotal = 0;
+var imagename = "Sandy";
   d3.csv("data/circles.csv", function(d) {
       //convert string into #
       //console.log(d);
@@ -138,7 +142,7 @@ font-size: 16px;
       function dragended(d, e) {
         //  console.log("dropped circle:");
         //    console.log(d);
-        var total = 0;
+var total = 0;
         //console.log(e);
         d3.select(this).lower();
         var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
@@ -168,9 +172,10 @@ font-size: 16px;
           //console.log(document.getElementById("text_"+arc).innerHTML);
           if (document.getElementById("text_"+arc)) {
               document.getElementById("text_"+arc).innerHTML = counts[arc];
+              sectors["text_"+arc] = counts[arc];
           }
           total = total + counts[arc];
-
+          endtotal = total
         })
 
     //  print for each sector
@@ -257,6 +262,32 @@ console.log(total);
     });
 
 </script>
+<script
+  src="https://code.jquery.com/jquery-3.4.0.min.js"
+  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript">
+  //Button interaction
+$(function(){
+  $('#nextb').on('click', function(){
+
+console.log(imagename);
+console.log(sectors);
+
+
+    if(endtotal == 100){
+      //we move on
+
+    }
+    else {
+      alert("not 100");
+    }
+  });
+
+});
+
+
+  </script>
 <div>
   <button id="nextb" type="button"> NEXT MAP >> </button>
 </div>
