@@ -28,7 +28,7 @@ font-size: 16px;
 var sectors = {};
 var nhc = {};
 var endtotal = 0;
-var imagename = "Sandy";
+var imagename = "SandyNHC";
   d3.csv("data/circles.csv", function(d) {
       //convert string into #
       //console.log(d);
@@ -270,9 +270,8 @@ console.log(total);
   //Button interaction
 $(function(){
   $('#nextb').on('click', function(){
-
-console.log(imagename);
-console.log(sectors);
+//this is what I want to save!
+console.log(imagename, sectors);
 
 
     if(endtotal == 100){
