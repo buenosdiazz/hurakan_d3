@@ -39,7 +39,7 @@ var site = "Site1"
 var sectors = {};
 var nhc = {};
 var endtotal = 0;
-var imagename = "SandyNHC";
+var imagename = "MichaelNHC";
   d3.csv("data/circles.csv", function(d) {
       //convert string into #
       //console.log(d);
@@ -56,7 +56,7 @@ var imagename = "SandyNHC";
       var h = 900;
       var p = 40;
       var counts = {};
-      var img_url = "url(/images/Sandy_NHC.png)"
+      var img_url = "url(/images/Michael_NHC.png)"
 
       //create svg
       var svg = d3.select("body")
@@ -66,22 +66,22 @@ var imagename = "SandyNHC";
 
       svg
         .append('svg:image')
-        .attr("xlink:href", "images/Sandy_NHC.png")
+        .attr("xlink:href", "images/Michael_NHC.png")
         .attr("width", "100%")
         .attr("height", "100%")
         .attr("x", 0)
-        .attr("y", 0)
+        .attr("y", 25)
         .style("opacity", .6);
 
         var svg2 = d3.select("body")
           .append("svg")
           .attr("width", 410)
-          .attr("height", 900);
+          .attr("height", 890);
 
 
           svg2
             .append('svg:image')
-            .attr("xlink:href", "images/Sandy_NHC2.png")
+            .attr("xlink:href", "images/Michael_NHC2.png")
             .attr("width", "100%")
             .attr("height", "42%")
             .attr("x", 0)
@@ -153,6 +153,8 @@ var imagename = "SandyNHC";
       function dragended(d, e) {
         //  console.log("dropped circle:");
         //    console.log(d);
+        //console.log(d3.event.x);
+          //console.log(d3.event.y);
 var total = 0;
         //console.log(e);
         d3.select(this).lower();
@@ -239,7 +241,7 @@ console.log(total);
         .data(pie_ready)
         .enter()
         .append('path')
-        .attr("transform", "translate(379,589), rotate(-23)")
+        .attr("transform", "translate(89,730.5), rotate(-23)")
         .attr("droppable", true)
         .attr('d', d3.arc()
           .innerRadius(0)
@@ -292,7 +294,7 @@ console.log(localStorage.getItem("participant"));
   timer = clearInterval( timer );
   //.. do something with timeSpent here...
 }
-      //we move on
+
       $.ajax({
                 url: "https://api.airtable.com/v0/appuVTqHDePN2JHNz/sheet?api_key=keyOa4X3WLWW1SzgE",
                 type: 'POST',
@@ -315,8 +317,8 @@ console.log(localStorage.getItem("participant"));
                 }
                }).done(function(data) {
                   console.log(data);
+                  setTimeout("location.href = 'JaimeNHC.html';",900);
                })
-//window.location.href = "h2.html";
                ;
 
     }
@@ -326,7 +328,6 @@ console.log(localStorage.getItem("participant"));
   });
 
 });
-
 
 
 

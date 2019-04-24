@@ -17,7 +17,6 @@ font-size: 16px;
 </style>
 
 <body>
-<h2>Image 2</h2>
 
 
   <h3> Place the numbered chips in the corresponding sectors </h3>
@@ -28,12 +27,19 @@ font-size: 16px;
 
 
 <script>
+var timeSpent = 0; //seconds on page
+var timer;
+window.onload = function() {
+  timer = setInterval( function() { timeSpent++; }, 998 );
+};
+
+
 
 var site = "Site1"
 var sectors = {};
 var nhc = {};
 var endtotal = 0;
-var imagename = "SandyNHC";
+var imagename = "MatthewNHC";
   d3.csv("data/circles.csv", function(d) {
       //convert string into #
       //console.log(d);
@@ -50,7 +56,7 @@ var imagename = "SandyNHC";
       var h = 900;
       var p = 40;
       var counts = {};
-      var img_url = "url(/images/Sandy_NHC.png)"
+      var img_url = "url(/images/Matthew_NHC.png)"
 
       //create svg
       var svg = d3.select("body")
@@ -60,22 +66,22 @@ var imagename = "SandyNHC";
 
       svg
         .append('svg:image')
-        .attr("xlink:href", "images/Sandy_NHC.png")
+        .attr("xlink:href", "images/Matthew_NHC.png")
         .attr("width", "100%")
         .attr("height", "100%")
         .attr("x", 0)
-        .attr("y", 0)
+        .attr("y", 25)
         .style("opacity", .6);
 
         var svg2 = d3.select("body")
           .append("svg")
           .attr("width", 410)
-          .attr("height", 900);
+          .attr("height", 890);
 
 
           svg2
             .append('svg:image')
-            .attr("xlink:href", "images/Sandy_NHC2.png")
+            .attr("xlink:href", "images/Matthew_NHC2.png")
             .attr("width", "100%")
             .attr("height", "42%")
             .attr("x", 0)
@@ -147,6 +153,8 @@ var imagename = "SandyNHC";
       function dragended(d, e) {
         //  console.log("dropped circle:");
         //    console.log(d);
+      //  console.log(d3.event.x);
+          //console.log(d3.event.y);
 var total = 0;
         //console.log(e);
         d3.select(this).lower();
@@ -233,7 +241,7 @@ console.log(total);
         .data(pie_ready)
         .enter()
         .append('path')
-        .attr("transform", "translate(379,589), rotate(-23)")
+        .attr("transform", "translate(465.5,692.5), rotate(-23)")
         .attr("droppable", true)
         .attr('d', d3.arc()
           .innerRadius(0)
@@ -277,17 +285,23 @@ $(function(){
   $('#nextb').on('click', function(){
 //this is what I want to save!
 console.log(imagename, sectors);
+console.log(localStorage.getItem("participant"));
 
 
     if(endtotal == 100){
-      //we move on
+
+      window.onunload = function() {
+  timer = clearInterval( timer );
+  //.. do something with timeSpent here...
+}
+
       $.ajax({
                 url: "https://api.airtable.com/v0/appuVTqHDePN2JHNz/sheet?api_key=keyOa4X3WLWW1SzgE",
                 type: 'POST',
                 dataType: "json",
                 data: {
                   "fields" : {
-                    "P#": pID,
+                    "P#": localStorage.getItem("participant"),
                     "text_arc_1": sectors.text_arc_1,
                     "text_arc_2": sectors.text_arc_2,
                     "text_arc_3": sectors.text_arc_3,
@@ -297,16 +311,15 @@ console.log(imagename, sectors);
                     "text_arc_7": sectors.text_arc_7,
                     "text_arc_8": sectors.text_arc_8,
                     "img_url": imagename,
-                    "time": '',
+                    "time": timeSpent,
                     "test": site,
                   }
                 }
                }).done(function(data) {
                   console.log(data);
-               });
-
-
-
+                  setTimeout("location.href = 'TyrionNHC.html';",900);
+               })
+               ;
 
     }
     else {
@@ -315,6 +328,7 @@ console.log(imagename, sectors);
   });
 
 });
+
 
 
   </script>

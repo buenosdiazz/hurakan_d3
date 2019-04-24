@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+button{
+    position:absolute;
+    bottom: 25%;
+    right:250px;
+    background-color: darkslategrey;
+border: none;
+color: white;
+padding: 15px 32px;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 16px;
+}
+</style>
+
+<body>
+
+
+  <h3> Place the numbered chips in the corresponding sectors </h3>
+
+</body>
+
+<script src="https://d3js.org/d3.v5.min.js"></script>
+
+
+<script>
+var timeSpent = 0; //seconds on page
+var timer;
+window.onload = function() {
+  timer = setInterval( function() { timeSpent++; }, 998 );
+};
+
+
+
+var site = "Site1"
+var sectors = {};
+var nhc = {};
+var endtotal = 0;
+var imagename = "IsaacNHC";
+  d3.csv("data/circles.csv", function(d) {
+      //convert string into #
+      //console.log(d);
+      return {
+        circle: d.circle,
+        cx: +d.cx,
+        cy: +d.cy,
+        value: +d.value,
+        radius: +d.radius,
+      };
+    }).then(function(data) {
+      //variables for height, width, and padding
+      var w = 800;
+      var h = 900;
+      var p = 40;
+      var counts = {};
+      var img_url = "url(/images/Isaac_NHC.png)"
+
+      //create svg
+      var svg = d3.select("body")
+        .append("svg")
+        .attr("width", w + p)
+        .attr("height", h + p);
+
+      svg
+        .append('svg:image')
+        .attr("xlink:href", "images/Isaac_NHC.png")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("x", 0)
+        .attr("y", 0)
+        .style("opacity", .6);
+
+        var svg2 = d3.select("body")
+          .append("svg")
+          .attr("width", 410)
+          .attr("height", 900);
+
+
+          svg2
+            .append('svg:image')
+            .attr("xlink:href", "images/Isaac_NHC2.png")
+            .attr("width", "100%")
+            .attr("height", "42%")
+            .attr("x", 0)
+            .attr("y", 0)
+            .style("opacity", 1);
+
+
+
+      //GROUP with text and circle
+      var group = svg.selectAll('g')
+        .data(data)
+        .enter().append("g")
+        .attr("draggable", true)
+        //cursor design
+        .attr("cursor", "move")
+        .call(d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended));
+
+      group.append("circle")
+        .attr("cx", function(d) {
+          return d.cx
+        })
+        .attr("cy", function(d) {
+          return d.cy
+        })
+        .attr("r", function(d) {
+          return d.radius
+        })
+        .attr("id", function(d) {
+          return d.circle
+        })
+        .style("stroke", "darkslategrey	")
+        .style("fill", "#FFFF	")
+        .style("opacity", .7)
+        .style("stroke-width", "2px")
+        .style("stroke-opacity", 0.9);
+
+      group.append("text")
+        .text(function(d) {
+          return d.value
+        })
+        .style("font-size", "14px")
+        .attr("fill", "darkslategrey")
+        .attr("x", function(d) {
+          return d.cx - 6
+        })
+        .attr("y", function(d) {
+          return d.cy + 5
+        });
+
+
+
+  //drag functions
+      function dragstarted(e) {
+        //console.log("dragstart:",d3.event.target);
+        d3.select(this).raise().classed("active", true);
+      }
+
+      function dragged(d) {
+        d3.select(this).select("circle").attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+
+
+        d3.select(this).select("text")
+          .attr("x", d.x = d3.event.x - 6)
+          .attr("y", d.y = d3.event.y + 5);
+
+
+      }
+
+
+      function dragended(d, e) {
+        //  console.log("dropped circle:");
+        //   console.log(d);
+        //console.log(d3.event.x);
+          //console.log(d3.event.y);
+var total = 0;
+        //console.log(e);
+        d3.select(this).lower();
+        var arc_id = d3.select(document.elementFromPoint(d3.event.sourceEvent.clientX, d3.event.sourceEvent.clientY)).attr("id");
+        d3.select(this).raise();
+
+        if (arc_id) {
+            if (d.currArc) {
+                  // circle has already been already been dragged
+                  // decrement it from the prev arc
+                  counts[d.currArc] = counts[d.currArc]-(d.value);
+            }
+
+          // increment count
+          counts[arc_id] = (counts[arc_id] || 0) + d.value;
+          d.currArc = arc_id;
+
+        } else {
+          // decrement count
+          if (d.currArc) {
+            counts[d.currArc] = counts[d.currArc] - (d.value);
+            delete d.currArc;
+          }
+          //counts[arc_id] = (counts[arc_id]||0)+1;
+        }
+
+        Object.keys(counts).forEach((arc) => {
+          //console.log(document.getElementById("text_"+arc).innerHTML);
+          if (document.getElementById("text_"+arc)) {
+              document.getElementById("text_"+arc).innerHTML = counts[arc];
+              sectors["text_"+arc] = counts[arc];
+          }
+          total = total + counts[arc];
+          endtotal = total
+        })
+
+    //  print for each sector
+        //console.log(counts);
+        //console.log(total);
+
+       d3.select(this).classed("active", false);
+        var circlemoved = []
+        var x = d3.event.x;
+        var y = d3.event.y;
+        var z = d.value;
+
+        circlemoved.push(x, y, z);
+        //position dropped
+        //console.log(circlemoved);
+
+        // svg.append("text")
+        //   .attr("x", 100)
+        //   .attr("dy", 200)
+        //   .text("Total: " + total);
+console.log(total);
+
+// ("#nextb").click(function() {
+//     if (total = 100) {
+//       console.log("yes");
+//     }, else  {
+//         console.log("no")
+//     }
+// });
+
+      }
+
+      var pieslices = [20, 20, 20, 20, 20, 20, 20, 20]
+      var radius = 220
+
+
+      var pie = d3.pie()
+      .startAngle(-90 * Math.PI/180)
+      .endAngle(-90 * Math.PI/180 + 2*Math.PI)
+        .value(function(d) {
+          return d.value;
+        })
+
+
+      var pie_ready = pie(d3.entries(pieslices))
+
+
+      svg
+        .selectAll('pie')
+        .data(pie_ready)
+        .enter()
+        .append('path')
+        .attr("transform", "translate(706.5,553.5), rotate(-23)")
+        .attr("droppable", true)
+        .attr('d', d3.arc()
+          .innerRadius(0)
+          .outerRadius(radius)
+        )
+        .attr('fill', "#FF69B4")
+        .style("fill-opacity", 0.03)
+        .attr("id", function(d, i) {
+          return "arc_" + i;
+        })
+        .attr("stroke", "#FF69B4")
+        .style("stroke-width", "2px")
+        .style("stroke-opacity", 1);
+
+
+        svg.selectAll(".sectorText")
+        		.data(pie_ready)
+        		.enter().append("text")
+        		.attr("class", "sectorText")
+        		.attr("dy", +15)
+        		.append("textPath")
+              .attr("startOffset","15%")
+              .style("text-anchor","middle")
+              .attr("id",function(d,i){return "text_arc_"+i;})
+        		.attr("xlink:href",function(d,i){return "#arc_"+i;})
+        		.text("0");
+
+
+
+
+    });
+
+</script>
+<script
+  src="https://code.jquery.com/jquery-3.4.0.min.js"
+  integrity="sha256-BJeo0qm959uMBGb65z40ejJYGSgR7REI4+CW1fNKwOg="
+  crossorigin="anonymous"></script>
+  <script type="text/javascript">
+  //Button interaction
+$(function(){
+  $('#nextb').on('click', function(){
+//this is what I want to save!
+console.log(imagename, sectors);
+console.log(localStorage.getItem("participant"));
+
+
+    if(endtotal == 100){
+
+      window.onunload = function() {
+  timer = clearInterval( timer );
+  //.. do something with timeSpent here...
+}
+
+      $.ajax({
+                url: "https://api.airtable.com/v0/appuVTqHDePN2JHNz/sheet?api_key=keyOa4X3WLWW1SzgE",
+                type: 'POST',
+                dataType: "json",
+                data: {
+                  "fields" : {
+                    "P#": localStorage.getItem("participant"),
+                    "text_arc_1": sectors.text_arc_1,
+                    "text_arc_2": sectors.text_arc_2,
+                    "text_arc_3": sectors.text_arc_3,
+                    "text_arc_4": sectors.text_arc_4,
+                    "text_arc_5": sectors.text_arc_5,
+                    "text_arc_6": sectors.text_arc_6,
+                    "text_arc_7": sectors.text_arc_7,
+                    "text_arc_8": sectors.text_arc_8,
+                    "img_url": imagename,
+                    "time": timeSpent,
+                    "test": site,
+                  }
+                }
+               }).done(function(data) {
+                  console.log(data);
+                  setTimeout("location.href = 'thankyou.html';",900);
+               })
+               ;
+
+    }
+    else {
+      alert("not 100");
+    }
+  });
+
+});
+
+
+
+  </script>
+<div>
+  <button id="nextb" type="button"> FINISH >> </button>
+</div>
+</html>
